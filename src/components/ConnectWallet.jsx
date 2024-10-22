@@ -1,43 +1,35 @@
-import { useState } from 'react';
-import { ethers } from 'ethers'
+import { useState } from "react";
+import { ethers } from "ethers";
 
-function ConnectWallet() {
+export default function ConnectWallet() {
+  const [walletAddress, setWalletAddress] = useState("");
 
-    const [ walletAddress, setWalletAddress ] = useState("")
-
-    const requestAccount = async () => {
-        if (window.ethereum) {
-          try {
-            // Request account access
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-    
-            // Create an ethers provider (updated for ethers v6)
-            const provider = new ethers.BrowserProvider(window.ethereum);
-    
-            // Get the signer (the connected wallet account)
-            const signer = await provider.getSigner();
-    
-            // Get the connected wallet address
-            const address = await signer.getAddress();
-    
-            console.log('Connected wallet address:', address);
-    
-            setWalletAddress(address);
-          } catch (err) {
-            console.log(err);
-          }
-        } else {
-          alert('MetaMask not installed');
-        }
-      };
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      alert("Please install MetaMask!");
+      return;
+    }
+    try {
+      // Request account access
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      setWalletAddress(address);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
-    <div>
-      
-        { walletAddress ? `Connected: ${walletAddress}` : <button className='bg-red-200 rounded-md p-2' onClick={requestAccount}>Connect Wallet</button> }
-      
+    <div className="w-full lg:w-1/2 sm:w-auto shadow-lg mx-auto rounded-xl m-2 p-4 bg-red-100 flex justify-center">
+      {walletAddress ? (
+        <p>Connected: {walletAddress}</p>
+      ) : (
+        <button className="bg-red-500 text-white px-4 py-1 rounded" onClick={connectWallet}>
+          Connect Wallet
+        </button>
+      )}
     </div>
   );
 }
-
-export default ConnectWallet;
