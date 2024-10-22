@@ -1,48 +1,37 @@
 import { useState } from "react";
 import { ethers } from "ethers";
+import { connectToWallet } from "./walletUtils";
 import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
 
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
   try {
-    if (!window.ethereum) throw new Error("No crypto wallet found. Please install it.");
-
-    // Request account access from MetaMask
-    await window.ethereum.request({ method: "eth_requestAccounts" });
-
-    // Create a provider for ethers.js
-    const provider = new ethers.BrowserProvider(window.ethereum);
-
-    // Get the signer (the connected account in MetaMask)
-    const signer = await provider.getSigner();
+    const { signer } = await connectToWallet(); // Use utility to connect
 
     // Ensure the recipient address is valid
-    ethers.getAddress(addr); 
+    ethers.getAddress(addr);
 
     // Send the transaction
     const tx = await signer.sendTransaction({
       to: addr,
-      value: ethers.parseEther(ether), // Convert the amount to wei
+      value: ethers.parseEther(ether),
     });
 
-    // Log the transaction details and set the state with the transaction
-    console.log("Transaction:", tx);
     setTxs([tx]);
   } catch (err) {
-    setError(err.message); // Capture and display the error
+    setError(err.message);
   }
 };
 
 export default function SendTransaction() {
-  const [error, setError] = useState(null);  // For error handling
-  const [txs, setTxs] = useState([]);  // Store transactions
+  const [error, setError] = useState(null);
+  const [txs, setTxs] = useState([]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData(e.target);  // Collect form data
-    setError(null);  // Reset error state
+    const data = new FormData(e.target);
+    setError(null);
 
-    // Call the startPayment function to process the transaction
     await startPayment({
       setError,
       setTxs,
