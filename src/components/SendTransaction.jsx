@@ -70,12 +70,12 @@ export default function SendTransaction() {
 
 
   return (
-    <form className="m-4" onSubmit={handleSubmit}>
-      <div className="credit-card w-full lg:w-[32rem] sm:w-[26rem] shadow-lg mx-auto rounded-3xl bg-white">
+    <form onSubmit={handleSubmit}>
+      <div className="credit-card w-full lg:w-[32rem] sm:w-[26rem] border mx-auto rounded-3xl bg-white">
         <main className="mt-4 p-4">
-          <h1 className="text-xl font-semibold text-gray-700 text-center">
-            Send ETH Payment
-          </h1>
+          <p className="text-sm ml-3 text-gray-700 ">
+            You pay
+          </p>
 
 
 
@@ -133,7 +133,6 @@ export default function SendTransaction() {
               </div>
 
 
-
               {/* Input Field for YOU_PAY */}
 
               <input
@@ -148,10 +147,11 @@ export default function SendTransaction() {
 
 
 
-
           {/* **************************** You Pay input - END ****************************** */}
 
 
+
+          {/* **************************** Recipient Address - START **************************** */}
 
 
           <div className="my-3">
@@ -162,6 +162,11 @@ export default function SendTransaction() {
               placeholder="Recipient Address"
             />
           </div>
+
+          {/* **************************** Recipient Address - END **************************** */}
+
+
+          
 
         </main>
 
