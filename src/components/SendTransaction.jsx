@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { connectToWallet } from "./walletUtils";
 // import ErrorMessage from "./ErrorMessage";
 import TxList from "./TxList";
-
+import axios from "axios";
 
 import CryptoSelector from "./SendTxForm/CryptoSelector";
+import InputField from "./SendTxForm/InputField";
+
+
 
 
 const startPayment = async ({ setError, setTxs, ether, addr }) => {
@@ -27,19 +30,33 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
   }
 };
 
+
+
+
 export default function SendTransaction() {
   // const [error, setError] = useState(null);
   const [txs, setTxs] = useState([]);
 
-  const [selectedIcon, setSelectedIcon] = useState("ETH"); 
+  const [youPayEthValue, setYouPayEthValue] = useState('');
+  const [youGetethValue, setYouGetEthValue] = useState('');
+  const [ethPrice, setEthPrice] = useState(null);
+  const [usdValue, setUsdValue] = useState(0);  // Get USD after user has put the eths
 
-  console.log(selectedIcon)
-  
+  const [selectedIconForPay, setSelectedIconForPay] = useState("ETH"); // Icon for YOU PAY
+  const [selectedIconForReceive, setSelectedIconForReceive] = useState("NOFILL"); // Icon for YOU RECEIVE
+
+  const [isBalanceInfoVisible, setBalanceInfoVisible] = useState(false);
+  const [isGasFeeInfoVisible, setGasFeeInfoVisible] = useState(false);
+  const [isPercentageVisible, setisPercentageVisible] = useState()
+
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
+
+    // console.log(`data is ${JSON.stringify(data)}`)
+
     // setError(null);
 
     await startPayment({
@@ -50,10 +67,52 @@ export default function SendTransaction() {
     });
   };
 
-  
+
+  useEffect(() => {
+    const fetchPrice = async () => {
+      try {
+        const response = await axios.get(
+          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+        );
+        setEthPrice(response.data.ethereum.usd);
+      } catch (error) {
+        console.error("Error fetching Ethereum price:", error);
+      }
+    };
+
+    fetchPrice();
+
+    // Refresh price every minute
+    const interval = setInterval(fetchPrice, 60000);
+
+    return () => clearInterval(interval); // Clear interval on component unmount
+  }, []);
 
 
-  
+
+  // Update USD equivalent when Ethereum value changes
+  useEffect(() => {
+    if (ethPrice && youPayEthValue) {
+      setUsdValue(ethPrice * youPayEthValue);
+    } else {
+      setUsdValue(0);
+    }
+  }, [ethPrice, youPayEthValue]);
+
+
+  // Handle You Pay Ethereum input change
+  const handleYouPayEthValueChange = (value) => {
+    setYouPayEthValue(value);
+  };
+
+
+  // Handle You Get Ethereum input change
+  const handleYouGetEthValueChange = (value) => {
+    setYouGetEthValue(value);
+  };
+
+
+
 
 
 
@@ -63,39 +122,94 @@ export default function SendTransaction() {
     <form onSubmit={handleSubmit}>
       <div className="credit-card w-full lg:w-[32rem] sm:w-[26rem] border mx-auto rounded-3xl bg-white">
         <main className="mt-4 p-4">
-          <p className="text-sm ml-3 text-gray-700 ">
-            You pay
-          </p>
 
+          <div className="flex justify-between">
+            <p className="text-sm ml-3 text-gray-700 ">You pay</p>
+            <p className="text-sm mr-3 text-gray-700 ">Balance 0.00</p>
+          </div>
 
-
-          {/* ************************* You Pay input - Starts ****************************** */}
-
-          <div className="my-3">
+          <div className="my-1">
             <div className="relative flex items-center">
-
-            <CryptoSelector selectedIcon={selectedIcon} setSelectedIcon={setSelectedIcon} />
-
-
-              {/* Input Field for YOU_PAY */}
-
-              <input
+              <CryptoSelector selectedIcon={selectedIconForPay} setSelectedIcon={setSelectedIconForPay} />
+              <InputField
                 name="ether"
                 type="number"
-                className="px-5 py-2 ml-2 border border-gray-300 rounded-3xl w-full focus:outline-none focus:ring focus:border-blue-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                placeholder="Amount in ETH"
+                step="any"
+                isPercentageVisible={false}
+                usdValue={usdValue} // Display Ethereum price
+                onChange={handleYouPayEthValueChange} // Get input value from YOU GET InputField
+                
               />
-
             </div>
           </div>
 
 
 
-          {/* **************************** You Pay input - END ****************************** */}
+
+          <div className="flex justify-between">
+            {/* Gas Fee Info */}
+            <div
+              className="relative inline-block"
+              onMouseEnter={() => setGasFeeInfoVisible(true)}
+              onMouseLeave={() => setGasFeeInfoVisible(false)}
+            >
+              <p className="text-xs mt-1 ml-3 text-gray-700 cursor-pointer">
+                + 0.00006 ~$1.5678 &#9888;
+              </p>
+              {isGasFeeInfoVisible && (
+                <div
+                  className={`absolute left-0 mt-1 w-48 p-2 bg-blue-100 text-blue-700 border border-blue-300 rounded shadow-lg z-10 
+                        transition-all duration-300 transform ${isGasFeeInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
+                >
+                  <p className="text-xs">Included gas is paid on top of the amount and covers takers' gas costs to fulfill your trade</p>
+                </div>
+              )}
+            </div>
+
+            {/* Balance Warning */}
+            <div
+              className="relative inline-block z-1"
+              onMouseEnter={() => setBalanceInfoVisible(true)}
+              onMouseLeave={() => setBalanceInfoVisible(false)}
+            >
+              <p className="text-xs mt-1 mr-3 text-red-700 cursor-pointer">
+                &#9888; Not enough balance
+              </p>
+              {isBalanceInfoVisible && (
+                <div
+                  className={`absolute right-0 mt-1 w-48 p-2 bg-red-100 text-red-700 border border-red-300 rounded shadow-lg z-10 
+                        transition-all duration-300 transform ${isBalanceInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
+                >
+                  <p className="text-xs">You should have at least 12.0019 ETH in your balance to perform this trade.</p>
+                </div>
+              )}
+            </div>
+          </div>
 
 
 
-          {/* **************************** Recipient Address - START **************************** */}
+
+
+
+          <p className="text-sm ml-3 mt-5 text-gray-700 ">
+            You receive
+          </p>
+
+          <div className="my-1">
+            <div className="relative flex items-center">
+              <CryptoSelector selectedIcon={selectedIconForReceive} setSelectedIcon={setSelectedIconForReceive} />
+              <InputField
+                name="abc"
+                type="text"
+                step="any"
+                isPercentageVisible={true}
+                usdValue={192.34} // Display Ethereum price
+                onChange={handleYouGetEthValueChange} // Get input value from YOU GET InputField
+              />
+            </div>
+          </div>
+
+
 
 
           <div className="my-3">
@@ -110,7 +224,7 @@ export default function SendTransaction() {
           {/* **************************** Recipient Address - END **************************** */}
 
 
-          
+
 
         </main>
 

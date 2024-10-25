@@ -7,5 +7,6 @@ export const cryptoIcons = {
     LINEA: "../public/Crypt Icons/linea.svg",
     OPTIMISM: "../public/Crypt Icons/optimism.svg",
     POLY: "../public/Crypt Icons/polygon.svg",
-    SOLANA: "../public/Crypt Icons/solana.svg"
+    SOLANA: "../public/Crypt Icons/solana.svg",
+    NOFILL: "../public/Crypt Icons/no-icon-fill.svg"
 };

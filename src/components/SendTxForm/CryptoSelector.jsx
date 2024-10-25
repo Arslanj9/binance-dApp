@@ -24,7 +24,11 @@ const CryptoSelector = ({ selectedIcon, setSelectedIcon }) => {
         { symbol: "OPTIMISM", name: "Optimism", isActive: false },
         { symbol: "POLY", name: "Polygon", isActive: false },
         { symbol: "SOLANA", name: "Solana", isActive: false },
+        { symbol: "NOFILL", name: "USDC", isActive: true },
     ];
+
+    // const iconName = selectedIcon;
+
 
 
     return (
@@ -38,7 +42,6 @@ const CryptoSelector = ({ selectedIcon, setSelectedIcon }) => {
             >
                 {/* Display selected icon */}
                 <div className="flex items-center">
-                    {/* <TokenIcon symbol={selectedIcon} variant="branded" className="mr-2" /> */}
                     <img src={cryptoIcons[selectedIcon]} alt={selectedIcon.toLowerCase()} className="mr-1" />
                     <h1>{selectedIcon}</h1>
                 </div>
@@ -58,7 +61,7 @@ const CryptoSelector = ({ selectedIcon, setSelectedIcon }) => {
                             <button
                                 key={crypto.symbol}
                                 className={`flex items-center relative px-2 py-1 border rounded-3xl transition duration-200 
-                  ${crypto.isActive ? 'bg-white border-grey-300 hover:bg-gray-100' : 'opacity-50 cursor-not-allowed bg-gray-200'}`}
+                                ${crypto.isActive ? 'bg-white border-grey-300 hover:bg-gray-100' : 'opacity-50 cursor-not-allowed bg-gray-200'}`}
                                 onClick={() => crypto.isActive && handleIconClick(crypto.symbol)} // Only call handleIconClick if active
                                 disabled={!crypto.isActive} // Disable button if inactive
                             >
