@@ -2,7 +2,7 @@ import MainContent from './pages/MainComponent';
 
 const App = () => {
   return (
-    <div>
+    <div className="bg-background_color" >
       <MainContent />
     </div>
   );

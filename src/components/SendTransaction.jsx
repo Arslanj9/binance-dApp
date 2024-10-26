@@ -120,12 +120,12 @@ export default function SendTransaction() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="credit-card w-full lg:w-[32rem] sm:w-[26rem] border mx-auto rounded-3xl bg-white">
-        <main className="mt-4 p-4">
+      <div style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }} className="credit-card w-full lg:w-[32rem] sm:w-[26rem] border-opacity-5 mx-auto rounded-3xl">
+        <main className="m-4 p-4">
 
           <div className="flex justify-between">
-            <p className="text-sm ml-3 text-gray-700 ">You pay</p>
-            <p className="text-sm mr-3 text-gray-700 ">Balance 0.00</p>
+            <p className="text-sm ml-3">You pay</p>
+            <p className="text-sm mr-3">Balance 0.00</p>
           </div>
 
           <div className="my-1">
@@ -138,7 +138,7 @@ export default function SendTransaction() {
                 isPercentageVisible={false}
                 usdValue={usdValue} // Display Ethereum price
                 onChange={handleYouPayEthValueChange} // Get input value from YOU GET InputField
-                
+
               />
             </div>
           </div>
@@ -150,16 +150,19 @@ export default function SendTransaction() {
             {/* Gas Fee Info */}
             <div
               className="relative inline-block"
-              onMouseEnter={() => setGasFeeInfoVisible(true)}
-              onMouseLeave={() => setGasFeeInfoVisible(false)}
             >
-              <p className="text-xs mt-1 ml-3 text-gray-700 cursor-pointer">
-                + 0.00006 ~$1.5678 &#9888;
+              <p className="text-xs mt-1 ml-3 cursor-text flex items-center">
+                + 0.00006 ~$1.5678
+                <span onMouseEnter={() => setGasFeeInfoVisible(true)}
+                      onMouseLeave={() => setGasFeeInfoVisible(false)} 
+                      className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-white border-white text-[12px] font-medium ml-1">
+                  !
+                </span>
               </p>
               {isGasFeeInfoVisible && (
                 <div
-                  className={`absolute left-0 mt-1 w-48 p-2 bg-blue-100 text-blue-700 border border-blue-300 rounded shadow-lg z-10 
-                        transition-all duration-300 transform ${isGasFeeInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
+                  className={`absolute left-0 mt-1 w-48 p-2 bg-blue-950  border rounded z-10 
+                        `}
                 >
                   <p className="text-xs">Included gas is paid on top of the amount and covers takers' gas costs to fulfill your trade</p>
                 </div>
@@ -191,7 +194,7 @@ export default function SendTransaction() {
 
 
 
-          <p className="text-sm ml-3 mt-5 text-gray-700 ">
+          <p className="text-sm ml-3 mt-5 ">
             You receive
           </p>
 
@@ -199,7 +202,7 @@ export default function SendTransaction() {
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForReceive} setSelectedIcon={setSelectedIconForReceive} />
               <InputField
-                name="abc"
+                name="youGetEther"
                 type="text"
                 step="any"
                 isPercentageVisible={true}
@@ -216,7 +219,8 @@ export default function SendTransaction() {
             <input
               name="addr"
               type="text"
-              className="w-full px-4 py-2 border border-gray-200 rounded-3xl focus:outline-none focus:ring focus:border-blue-300"
+              className="w-full px-4 py-2 border  rounded-3xl focus:outline-none focus:ring focus:border-blue-300"
+              style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }}
               placeholder="Recipient Address"
             />
           </div>
@@ -229,10 +233,10 @@ export default function SendTransaction() {
         </main>
 
 
-        <div className="p-4">
+        <div className="p-4 m-2">
           <button
             type="submit"
-            className="btn btn-primary submit-button focus:ring focus:outline-none w-full bg-blue-200 rounded-lg py-2"
+            className="btn btn-primary submit-button focus:ring focus:outline-none w-full bg-blue-700 rounded-lg py-2"
           >
             Pay now
           </button>

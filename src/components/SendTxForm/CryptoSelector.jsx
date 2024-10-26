@@ -38,7 +38,8 @@ const CryptoSelector = ({ selectedIcon, setSelectedIcon }) => {
 
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center px-4 py-2 w-full border border-grey-300 rounded-3xl focus:outline-none"
+                style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }}
+                className="flex items-center px-4 py-2 w-full rounded-3xl focus:outline-none"
             >
                 {/* Display selected icon */}
                 <div className="flex items-center">

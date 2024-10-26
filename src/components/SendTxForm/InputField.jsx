@@ -19,7 +19,8 @@ const InputField = ({ name, type, step, usdValue, onChange, isPercentageVisible 
                 type={type}
                 step={step} // Allow any decimal value
                 onChange={handleChange} // Call handleChange when input changes
-                className="px-5 py-2 border border-gray-300 rounded-3xl w-full focus:outline-none focus:ring focus:border-blue-300 pr-12 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }}
+                className="px-5 py-2 border  rounded-3xl w-full focus:outline-none focus:ring focus:border-blue-300 pr-12 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
             />
             {usdValue > 0 && (
                 <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500  text-right">

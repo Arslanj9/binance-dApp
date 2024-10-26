@@ -3,6 +3,7 @@ import ConnectWallet from "../components/ConnectWallet";
 import SendTransaction from "../components/SendTransaction";
 import Fee from "../components/Fee"; 
 
+
 const MainContent = () => {
   const [activeSection, setActiveSection] = useState("sendTransaction"); // Default active section
 
@@ -15,6 +16,7 @@ const MainContent = () => {
       <div className="my-4">
         <ConnectWallet />
       </div>
+        
 
       {/* Button section */}
       <div className="flex justify-center lg:mr-52 sm:mr-44 mt-8">
