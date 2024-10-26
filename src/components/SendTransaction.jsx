@@ -153,15 +153,17 @@ export default function SendTransaction() {
             >
               <p className="text-xs mt-1 ml-3 cursor-text flex items-center">
                 + 0.00006 ~$1.5678
-                <span onMouseEnter={() => setGasFeeInfoVisible(true)}
-                      onMouseLeave={() => setGasFeeInfoVisible(false)} 
-                      className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-white border-white text-[12px] font-medium ml-1">
+                {/* Informational Icon */}
+                <span 
+                  onMouseEnter={() => setGasFeeInfoVisible(true)}
+                  onMouseLeave={() => setGasFeeInfoVisible(false)}
+                  className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-white border-white text-[12px] font-medium ml-1">
                   !
                 </span>
               </p>
               {isGasFeeInfoVisible && (
                 <div
-                  className={`absolute left-0 mt-1 w-48 p-2 bg-blue-950  border rounded z-10 
+                  className={`absolute left-0 mt-1 w-48 p-2  border rounded z-10 
                         `}
                 >
                   <p className="text-xs">Included gas is paid on top of the amount and covers takers' gas costs to fulfill your trade</p>
@@ -175,12 +177,18 @@ export default function SendTransaction() {
               onMouseEnter={() => setBalanceInfoVisible(true)}
               onMouseLeave={() => setBalanceInfoVisible(false)}
             >
-              <p className="text-xs mt-1 mr-3 text-red-700 cursor-pointer">
-                &#9888; Not enough balance
+              <p className="text-xs mt-1 mr-3 text-red-700 cursor-pointer flex items-center gap-1">
+                {/* &#9888;  */}
+                {/* Warning Icon */}
+                <span
+                  className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-red-600 border-red-600 text-[12px] font-medium ml-1">
+                  !
+                </span>
+                Not enough balance
               </p>
               {isBalanceInfoVisible && (
                 <div
-                  className={`absolute right-0 mt-1 w-48 p-2 bg-red-100 text-red-700 border border-red-300 rounded shadow-lg z-10 
+                  className={`absolute right-0 mt-1 w-48 p-2  text-red-600 border border-white rounded shadow-lg z-10 
                         transition-all duration-300 transform ${isBalanceInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
                 >
                   <p className="text-xs">You should have at least 12.0019 ETH in your balance to perform this trade.</p>
