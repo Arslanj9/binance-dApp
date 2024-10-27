@@ -33,7 +33,7 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
 
 
 
-export default function SendTransaction() {
+export default function SendTransaction({ walletAddress, balance }) {
   // const [error, setError] = useState(null);
   const [txs, setTxs] = useState([]);
 
@@ -49,26 +49,10 @@ export default function SendTransaction() {
   const [isGasFeeInfoVisible, setGasFeeInfoVisible] = useState(false);
   const [isPercentageVisible, setisPercentageVisible] = useState()
 
-  const [balance, setBalance] = useState(null);
-  const [walletAddress, setWalletAddress] = useState(null);
+  // Convert youPayEthValue and balance to numbers for comparison
+  const isBalanceInsufficient = youPayEthValue && parseFloat(youPayEthValue) > parseFloat(balance);
 
 
-
-
-  useEffect(() => {
-    const connectWallet = async () => {
-      try {
-        const { address, balance } = await connectToWallet();
-        setWalletAddress(address);
-        setBalance(balance === "0.00" ? "0.00" : balance); // Set balance in state
-      } catch (err) {
-        // setError(err.message);
-        console.log(err.message)
-      }
-    };
-
-    connectWallet();
-  }, []);
 
 
 
@@ -78,8 +62,6 @@ export default function SendTransaction() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
-
-    // console.log(`data is ${JSON.stringify(data)}`)
 
     // setError(null);
 
@@ -219,15 +201,15 @@ export default function SendTransaction() {
               onMouseEnter={() => setBalanceInfoVisible(true)}
               onMouseLeave={() => setBalanceInfoVisible(false)}
             >
-              <p className="text-xs mr-3 text-red-700 cursor-pointer flex items-center gap-1">
-                {/* &#9888;  */}
-                {/* Warning Icon */}
-                <span
-                  className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-red-600 border-red-600 text-[12px] font-medium ml-1">
-                  !
-                </span>
-                Not enough balance
-              </p>
+              {isBalanceInsufficient && (
+                <p className="text-xs mr-3 mt-1 text-red-700 cursor-pointer flex items-center gap-1">
+                  {/* Warning Icon */}
+                  <span className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-red-600 border-red-600 text-[12px] font-medium ml-1">
+                    !
+                  </span>
+                  Not enough balance
+                </p>
+              )}
               {isBalanceInfoVisible && (
                 <div
                   className={`absolute right-0 mt-1 w-48 p-2  text-red-600 border border-white rounded shadow-lg z-10 
@@ -244,7 +226,7 @@ export default function SendTransaction() {
 
 
 
-          <p className="text-sm ml-3 mt-5 ">
+          <p className="text-sm ml-3 mt-8 ">
             You receive
           </p>
 

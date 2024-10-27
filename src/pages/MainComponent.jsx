@@ -6,15 +6,22 @@ import Fee from "../components/Fee";
 
 const MainContent = () => {
   const [activeSection, setActiveSection] = useState("sendTransaction"); // Default active section
+  const [walletAddress, setWalletAddress] = useState("");
+  const [balance, setBalance] = useState("0.00");
+
+
 
   const handleButtonClick = (section) => {
     setActiveSection(section);
   };
 
+
+
+
   return (
     <div>
       <div className="my-4">
-        <ConnectWallet />
+        <ConnectWallet setWalletAddress={setWalletAddress} walletAddress={walletAddress} setBalance={setBalance} />
       </div>
 
 
@@ -38,7 +45,7 @@ const MainContent = () => {
 
       {/* Main content rendering */}
       <div>
-        {activeSection === "sendTransaction" && <SendTransaction />}
+        {activeSection === "sendTransaction" && <SendTransaction walletAddress={walletAddress} balance={balance} />}
         {activeSection === "fee" && <Fee />}
       </div>
     </div>

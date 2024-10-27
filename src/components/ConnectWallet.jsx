@@ -1,18 +1,21 @@
-import { useState } from "react";
 import { connectToWallet } from "./walletUtils";
 
-export default function ConnectWallet() {
-  const [walletAddress, setWalletAddress] = useState("");
+export default function ConnectWallet({ setWalletAddress, setBalance, walletAddress }) {
+  // const [walletAddress, setWalletAddress] = useState("");
 
+  
   const connectWallet = async () => {
     try {
-      const { address } = await connectToWallet();
+      const { address, balance } = await connectToWallet();
       setWalletAddress(address);
+      setBalance(balance);
     } catch (err) {
       console.error(err.message);
       alert(err.message);
     }
   };
+
+
 
   return (
     <div className="w-full flex justify-center">
