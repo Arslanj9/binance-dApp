@@ -46,8 +46,8 @@ const InputField = ({ name, type, step, usdValue, onChange, isPercentageVisible 
                                     className={`absolute right-0 w-48 p-2  border rounded shadow-lg transition-all duration-300 z-20'
                                         }`}
                                 >
-                                    <p className="text-xs">
-                                        You should have at least 12.0019 ETH in your balance to perform this trade.
+                                    <p className="text-xs text-left">
+                                    You will receive the buy price or better, so you do not need to set a slippage tolerance. Cross-chain trades between a single asset (e.g. USDC) have zero price impact, regardless of your order size.
                                     </p>
                                 </div>
                             )}

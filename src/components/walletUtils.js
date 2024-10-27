@@ -17,5 +17,10 @@ export const connectToWallet = async () => {
   // Get the wallet address
   const address = await signer.getAddress();
 
-  return { provider, signer, address };
+  // Get the balance
+  const balance = await provider.getBalance(address);
+  const formattedBalance = parseFloat(ethers.formatEther(balance)).toFixed(2); // Convert balance to Ether format
+
+
+  return { provider, signer, address, balance: formattedBalance };
 };

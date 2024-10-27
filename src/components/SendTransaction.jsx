@@ -38,7 +38,7 @@ export default function SendTransaction() {
   const [txs, setTxs] = useState([]);
 
   const [youPayEthValue, setYouPayEthValue] = useState('');
-  const [youGetethValue, setYouGetEthValue] = useState('');
+  const [youGetEthValue, setYouGetEthValue] = useState('');
   const [ethPrice, setEthPrice] = useState(null);
   const [usdValue, setUsdValue] = useState(0);  // Get USD after user has put the eths
 
@@ -48,6 +48,30 @@ export default function SendTransaction() {
   const [isBalanceInfoVisible, setBalanceInfoVisible] = useState(false);
   const [isGasFeeInfoVisible, setGasFeeInfoVisible] = useState(false);
   const [isPercentageVisible, setisPercentageVisible] = useState()
+
+  const [balance, setBalance] = useState(null);
+  const [walletAddress, setWalletAddress] = useState(null);
+
+
+
+
+  useEffect(() => {
+    const connectWallet = async () => {
+      try {
+        const { address, balance } = await connectToWallet();
+        setWalletAddress(address);
+        setBalance(balance === "0.00" ? "0.00" : balance); // Set balance in state
+      } catch (err) {
+        // setError(err.message);
+        console.log(err.message)
+      }
+    };
+
+    connectWallet();
+  }, []);
+
+
+
 
 
 
@@ -123,9 +147,27 @@ export default function SendTransaction() {
       <div style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }} className="credit-card w-full lg:w-[32rem] sm:w-[26rem] border-opacity-5 mx-auto rounded-3xl">
         <main className="m-4 p-4">
 
+
+          {walletAddress && (
+            <div className="flex justify-center  mb-9">
+              <p className="text-gray-500">
+                Connected Wallet: <span className="font-semibold text-gray-500">{walletAddress.slice(0, 7)}...</span>
+              </p>
+            </div>
+          )}
+
+
           <div className="flex justify-between">
             <p className="text-sm ml-3">You pay</p>
-            <p className="text-sm mr-3">Balance 0.00</p>
+            <p
+              className={`text-sm mr-3 flex gap-2 ${balance === "0.000" ? "text-red-500" : "text-white"
+                }`}
+            >
+              Balance:
+              {balance !== null && (
+                <span className="font-semibold">{balance} ETH</span>
+              )}
+            </p>
           </div>
 
           <div className="my-1">
@@ -154,7 +196,7 @@ export default function SendTransaction() {
               <p className="text-xs mt-1 ml-3 cursor-text flex items-center">
                 + 0.00006 ~$1.5678
                 {/* Informational Icon */}
-                <span 
+                <span
                   onMouseEnter={() => setGasFeeInfoVisible(true)}
                   onMouseLeave={() => setGasFeeInfoVisible(false)}
                   className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-white border-white text-[12px] font-medium ml-1">
