@@ -33,7 +33,7 @@ const CryptoSelector = ({ selectedIcon, setSelectedIcon }) => {
 
     return (
 
-        <div className="relative">
+        <div className="relative" >
             {/* Button to toggle the blocks */}
 
             <button
@@ -54,23 +54,24 @@ const CryptoSelector = ({ selectedIcon, setSelectedIcon }) => {
 
             {/* Dropdown Menu */}
             {isOpen && (
-                <div className="absolute z-50 mt-2 border rounded-lg shadow-lg w-full">
+                <div  className="absolute z-50 mt-2 rounded-lg shadow-lg w-full">
 
                     {/* DROPDOWN ICONS */}
-                    <div className="grid lg:grid-cols-3 gap-2 p-2 rounded-xl bg-blue-200 lg:w-[30rem] sm:w-[24rem] sm:grid-cols-2">
+                    <div style={{ border: "3px solid rgba(255, 254, 254, 0.219)" }} className="grid lg:grid-cols-3 gap-2 p-2 rounded-xl lg:w-[28rem] sm:w-[24rem] sm:grid-cols-2">
                         {cryptoOptions.map((crypto) => (
                             <button
                                 key={crypto.symbol}
+                                style={{ border: "2px solid rgba(255, 254, 254, 0.219)" }}
                                 className={`flex items-center relative px-2 py-1 border rounded-3xl transition duration-200 
-                                ${crypto.isActive ? 'bg-white border-grey-300 hover:bg-gray-100' : 'opacity-50 cursor-not-allowed bg-gray-200'}`}
+                                ${crypto.isActive ? 'border-grey-300 hover:bg-slate-700' : 'opacity-50 cursor-not-allowed'}`}
                                 onClick={() => crypto.isActive && handleIconClick(crypto.symbol)} // Only call handleIconClick if active
                                 disabled={!crypto.isActive} // Disable button if inactive
                             >
                                 {/* Overlay for disabled buttons */}
                                 {!crypto.isActive && (
-                                    <div className="absolute inset-0 bg-gray-100 opacity-60 rounded-3xl" />
+                                    <div className="absolute inset-0 bg-gray-700 opacity-60 rounded-3xl" />
                                 )}
-                                <img src={cryptoIcons[crypto.symbol]} alt={crypto.symbol.toLowerCase()} className="mr-1" />
+                                <img src={cryptoIcons[crypto.symbol]} alt={crypto.symbol.toLowerCase()} className="mr-1 bg-transparent" />
                                 {crypto.name}
                             </button>
                         ))}

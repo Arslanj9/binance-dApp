@@ -163,7 +163,7 @@ export default function SendTransaction() {
               </p>
               {isGasFeeInfoVisible && (
                 <div
-                  className={`absolute left-0 mt-1 w-48 p-2  border rounded z-10 
+                  className={`absolute left-0 w-48 p-2 border rounded z-10 
                         `}
                 >
                   <p className="text-xs">Included gas is paid on top of the amount and covers takers' gas costs to fulfill your trade</p>
@@ -177,7 +177,7 @@ export default function SendTransaction() {
               onMouseEnter={() => setBalanceInfoVisible(true)}
               onMouseLeave={() => setBalanceInfoVisible(false)}
             >
-              <p className="text-xs mt-1 mr-3 text-red-700 cursor-pointer flex items-center gap-1">
+              <p className="text-xs mr-3 text-red-700 cursor-pointer flex items-center gap-1">
                 {/* &#9888;  */}
                 {/* Warning Icon */}
                 <span

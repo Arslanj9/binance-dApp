@@ -31,17 +31,19 @@ const InputField = ({ name, type, step, usdValue, onChange, isPercentageVisible 
 
                     {isPercentageVisible && (
                         <>
-                            <span
-                                onMouseEnter={() => setDialogVisible(true)}
-                                onMouseLeave={() => setDialogVisible(false)}
-                                className="text-xs block cursor-pointer" // Added cursor-pointer for better UX
-                            >
+                            <span className="text-xs cursor-text flex items-center">
                                 (-0.0748%)
+                                <span
+                                    onMouseEnter={() => setDialogVisible(true)}
+                                    onMouseLeave={() => setDialogVisible(false)}
+                                    className="flex items-center justify-center cursor-pointer w-3 h-3 rounded-full border-2 bg-transparent text-white border-white text-[12px] font-medium ml-1">
+                                    !
+                                </span>
                             </span>
 
                             {isDialogVisible && (
                                 <div
-                                    className={`absolute right-0 mt-1 w-48 p-2 bg-red-100 text-red-700 border border-red-300 rounded shadow-lg transition-all duration-300 z-20'
+                                    className={`absolute right-0 w-48 p-2  border rounded shadow-lg transition-all duration-300 z-20'
                                         }`}
                                 >
                                     <p className="text-xs">
