@@ -8,6 +8,8 @@ import axios from "axios";
 import CryptoSelector from "./SendTxForm/CryptoSelector";
 import InputField from "./SendTxForm/InputField";
 
+import calculateFee from '../utils/calculateFee';
+
 
 
 
@@ -38,8 +40,11 @@ export default function SendTransaction({ walletAddress, balance }) {
   const [txs, setTxs] = useState([]);
 
   const [youPayEthValue, setYouPayEthValue] = useState('');
+  const [calculatedFee, setCalculatedFee] = useState(0);
   const [youGetEthValue, setYouGetEthValue] = useState('');
-  const [ethPrice, setEthPrice] = useState(null);
+
+  // const [ethPrice, setEthPrice] = useState(null);
+  const [ethToUsdRate, setEthToUsdRate] = useState(null);
   const [usdValue, setUsdValue] = useState(0);  // Get USD after user has put the eths
 
   const [selectedIconForPay, setSelectedIconForPay] = useState("ETH"); // Icon for YOU PAY
@@ -80,7 +85,7 @@ export default function SendTransaction({ walletAddress, balance }) {
         const response = await axios.get(
           "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
         );
-        setEthPrice(response.data.ethereum.usd);
+        setEthToUsdRate(response.data.ethereum.usd);
       } catch (error) {
         console.error("Error fetching Ethereum price:", error);
       }
@@ -98,17 +103,19 @@ export default function SendTransaction({ walletAddress, balance }) {
 
   // Update USD equivalent when Ethereum value changes
   useEffect(() => {
-    if (ethPrice && youPayEthValue) {
-      setUsdValue(ethPrice * youPayEthValue);
+    if (ethToUsdRate && youPayEthValue) {
+      setUsdValue(ethToUsdRate * youPayEthValue);
     } else {
       setUsdValue(0);
     }
-  }, [ethPrice, youPayEthValue]);
+  }, [ethToUsdRate, youPayEthValue]);
 
 
-  // Handle You Pay Ethereum input change
-  const handleYouPayEthValueChange = (value) => {
-    setYouPayEthValue(value);
+  const handleYouPayEthInputChange = (value) => {
+    const ethAmount = parseFloat(value) || 0;
+    setYouPayEthValue(ethAmount);
+    const fee = calculateFee(ethAmount);
+    setCalculatedFee(fee);
   };
 
 
@@ -117,6 +124,8 @@ export default function SendTransaction({ walletAddress, balance }) {
     setYouGetEthValue(value);
   };
 
+
+  
 
 
 
@@ -139,6 +148,7 @@ export default function SendTransaction({ walletAddress, balance }) {
           )}
 
 
+          {/* ---- YOU PAY --- */}
           <div className="flex justify-between">
             <p className="text-sm ml-3">You pay</p>
             <p
@@ -161,12 +171,10 @@ export default function SendTransaction({ walletAddress, balance }) {
                 step="any"
                 isPercentageVisible={false}
                 usdValue={usdValue} // Display Ethereum price
-                onChange={handleYouPayEthValueChange} // Get input value from YOU GET InputField
-
+                onChange={handleYouPayEthInputChange} // Get input value from YOU GET InputField
               />
             </div>
           </div>
-
 
 
 
@@ -176,7 +184,8 @@ export default function SendTransaction({ walletAddress, balance }) {
               className="relative inline-block"
             >
               <p className="text-xs mt-1 ml-3 cursor-text flex items-center">
-                + 0.00006 ~$1.5678
+               
+                + {calculatedFee.toFixed(5)} ETH ~${(calculatedFee * ethToUsdRate).toFixed(4)}
                 {/* Informational Icon */}
                 <span
                   onMouseEnter={() => setGasFeeInfoVisible(true)}
@@ -201,7 +210,7 @@ export default function SendTransaction({ walletAddress, balance }) {
               onMouseEnter={() => setBalanceInfoVisible(true)}
               onMouseLeave={() => setBalanceInfoVisible(false)}
             >
-              {isBalanceInsufficient && (
+              { isBalanceInsufficient > 0 && (
                 <p className="text-xs mr-3 mt-1 text-red-700 cursor-pointer flex items-center gap-1">
                   {/* Warning Icon */}
                   <span className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-red-600 border-red-600 text-[12px] font-medium ml-1">
@@ -215,7 +224,7 @@ export default function SendTransaction({ walletAddress, balance }) {
                   className={`absolute right-0 mt-1 w-48 p-2  text-red-600 border border-white rounded shadow-lg z-10 
                         transition-all duration-300 transform ${isBalanceInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
                 >
-                  <p className="text-xs">You should have at least 12.0019 ETH in your balance to perform this trade.</p>
+                  <p className="text-xs">You should have at least {calculatedFee + youPayEthValue} ETH in your balance to perform this trade.</p>
                 </div>
               )}
             </div>
@@ -225,7 +234,7 @@ export default function SendTransaction({ walletAddress, balance }) {
 
 
 
-
+          {/* ---- YOU RECEIVE --- */}
           <p className="text-sm ml-3 mt-8 ">
             You receive
           </p>
