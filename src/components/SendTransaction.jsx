@@ -6,7 +6,10 @@ import TxList from "./TxList";
 import axios from "axios";
 
 import CryptoSelector from "./SendTxForm/CryptoSelector";
-import InputField from "./SendTxForm/InputField";
+
+// import InputField from "./SendTxForm/InputField";
+import YouPayInputField from "./SendTxForm/YouPayInputField";
+import YouGetInputField from "./SendTxForm/YouGetInputField"
 
 import calculateFee from '../utils/calculateFee';
 
@@ -39,25 +42,23 @@ export default function SendTransaction({ walletAddress, balance }) {
   // const [error, setError] = useState(null);
   const [txs, setTxs] = useState([]);
 
-  const [youPayEthValue, setYouPayEthValue] = useState('');
+  const [youPay_EthInput, setYouPay_EthInput] = useState('');
+  const [youGet_EthInput, setYouGet_EthInput] = useState('');
   const [calculatedFee, setCalculatedFee] = useState(0);
-  const [youGetEthValue, setYouGetEthValue] = useState('');
 
   // const [ethPrice, setEthPrice] = useState(null);
   const [ethToUsdRate, setEthToUsdRate] = useState(null);
-  const [usdValue, setUsdValue] = useState(0);  // Get USD after user has put the eths
+  const [youPayUSDValue, setYouPayUSDValue] = useState(0);  // Get USD after user has put the eths
+  const [youGetUSDValue, setYouGetUSDValue] = useState(0);  // Get USD after user has put the eths
 
   const [selectedIconForPay, setSelectedIconForPay] = useState("ETH"); // Icon for YOU PAY
-  const [selectedIconForReceive, setSelectedIconForReceive] = useState("NOFILL"); // Icon for YOU RECEIVE
+  const [selectedIconForReceive, setSelectedIconForReceive] = useState("ETH"); // Icon for YOU RECEIVE
 
   const [isBalanceInfoVisible, setBalanceInfoVisible] = useState(false);
   const [isGasFeeInfoVisible, setGasFeeInfoVisible] = useState(false);
-  const [isPercentageVisible, setisPercentageVisible] = useState()
-
+  
   // Convert youPayEthValue and balance to numbers for comparison
-  const isBalanceInsufficient = youPayEthValue && parseFloat(youPayEthValue) > parseFloat(balance);
-
-
+  const isBalanceInsufficient = youPay_EthInput && parseFloat(youPay_EthInput) > parseFloat(balance);
 
 
 
@@ -101,31 +102,68 @@ export default function SendTransaction({ walletAddress, balance }) {
 
 
 
-  // Update USD equivalent when Ethereum value changes
+  // Update YouPay USD equivalent when Ethereum value changes
   useEffect(() => {
-    if (ethToUsdRate && youPayEthValue) {
-      setUsdValue(ethToUsdRate * youPayEthValue);
+    if (ethToUsdRate && youPay_EthInput) {
+      setYouPayUSDValue(ethToUsdRate * youPay_EthInput);
     } else {
-      setUsdValue(0);
+      setYouPayUSDValue(0);
     }
-  }, [ethToUsdRate, youPayEthValue]);
+  }, [ethToUsdRate, youPay_EthInput]);
 
 
-  const handleYouPayEthInputChange = (value) => {
-    const ethAmount = parseFloat(value) || 0;
-    setYouPayEthValue(ethAmount);
-    const fee = calculateFee(ethAmount);
-    setCalculatedFee(fee);
+  // Update YouGet USD equivalent when Ethereum value changes
+  useEffect(() => {
+    if (ethToUsdRate && youGet_EthInput) {
+      setYouGetUSDValue(ethToUsdRate * youGet_EthInput);
+    } else {
+      setYouGetUSDValue(0);
+    }
+  }, [ethToUsdRate, youGet_EthInput]);
+
+
+
+
+
+
+
+  // Handle You Pay Ethereum input change
+  const handleYouPay_EthInputChange = (value) => {
+
+    if (value === '') {
+      setYouPay_EthInput(value);
+      setYouGet_EthInput('');
+    } else {
+      const newValue = Number(value); // Convert input value to a number
+      const fee = calculateFee(newValue); // Calculate the fee based on the new value
+      setCalculatedFee(fee); // Update the calculated fee state
+      setYouPay_EthInput(value); // Update the You Pay input state
+      setYouGet_EthInput(newValue - fee); // Set You Get input based on the calculated fee
+    }
   };
+
 
 
   // Handle You Get Ethereum input change
-  const handleYouGetEthValueChange = (value) => {
-    setYouGetEthValue(value);
+  const handleYouGet_EthInputChange = (value) => {
+
+    if (value === '') {
+      setYouGet_EthInput(value);
+      setYouPay_EthInput(''); // Clear first input if second input is empty
+    } else {
+      const newValue = Number(value);
+      const fee = calculateFee(newValue); // Calculate the fee based on the new value
+      setCalculatedFee(fee); // Update the calculated fee state
+      setYouGet_EthInput(value);
+      setYouPay_EthInput(newValue + fee); // Update first input value
+    }
   };
 
 
-  
+
+
+
+
 
 
 
@@ -165,13 +203,13 @@ export default function SendTransaction({ walletAddress, balance }) {
           <div className="my-1">
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForPay} setSelectedIcon={setSelectedIconForPay} />
-              <InputField
-                name="ether"
+              <YouPayInputField
+                name="youPayEth"
                 type="number"
                 step="any"
-                isPercentageVisible={false}
-                usdValue={usdValue} // Display Ethereum price
-                onChange={handleYouPayEthInputChange} // Get input value from YOU GET InputField
+                value={youPay_EthInput}
+                youPayUSDValue={youPayUSDValue} // Display Ethereum price
+                onChange={handleYouPay_EthInputChange} // Get input value from YOU GET InputField
               />
             </div>
           </div>
@@ -184,7 +222,7 @@ export default function SendTransaction({ walletAddress, balance }) {
               className="relative inline-block"
             >
               <p className="text-xs mt-1 ml-3 cursor-text flex items-center">
-               
+
                 + {calculatedFee.toFixed(5)} ETH ~${(calculatedFee * ethToUsdRate).toFixed(4)}
                 {/* Informational Icon */}
                 <span
@@ -210,7 +248,7 @@ export default function SendTransaction({ walletAddress, balance }) {
               onMouseEnter={() => setBalanceInfoVisible(true)}
               onMouseLeave={() => setBalanceInfoVisible(false)}
             >
-              { isBalanceInsufficient > 0 && (
+              {isBalanceInsufficient > 0 && (
                 <p className="text-xs mr-3 mt-1 text-red-700 cursor-pointer flex items-center gap-1">
                   {/* Warning Icon */}
                   <span className="flex items-center justify-center w-3 h-3 cursor-pointer rounded-full border-2 bg-transparent text-red-600 border-red-600 text-[12px] font-medium ml-1">
@@ -224,11 +262,19 @@ export default function SendTransaction({ walletAddress, balance }) {
                   className={`absolute right-0 mt-1 w-48 p-2  text-red-600 border border-white rounded shadow-lg z-10 
                         transition-all duration-300 transform ${isBalanceInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
                 >
-                  <p className="text-xs">You should have at least {calculatedFee + youPayEthValue} ETH in your balance to perform this trade.</p>
+                  <p className="text-xs">You should have at least {calculatedFee + youPay_EthInput} ETH in your balance to perform this trade.</p>
                 </div>
               )}
             </div>
           </div>
+
+
+
+
+
+
+
+
 
 
 
@@ -242,13 +288,13 @@ export default function SendTransaction({ walletAddress, balance }) {
           <div className="my-1">
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForReceive} setSelectedIcon={setSelectedIconForReceive} />
-              <InputField
-                name="youGetEther"
-                type="text"
+              <YouGetInputField
+                name="youGetEth"
+                type="number"
                 step="any"
-                isPercentageVisible={true}
-                usdValue={192.34} // Display Ethereum price
-                onChange={handleYouGetEthValueChange} // Get input value from YOU GET InputField
+                value={youGet_EthInput}
+                youPayUSDValue={youGetUSDValue} // Display Ethereum price
+                onChange={handleYouGet_EthInputChange} // Get input value from YOU GET InputField
               />
             </div>
           </div>
