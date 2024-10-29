@@ -131,13 +131,14 @@ export default function SendTransaction({ walletAddress, balance }) {
   const handleYouPay_EthInputChange = (value) => {
 
     if (value === '') {
-      setYouPay_EthInput(value);
+      setYouPay_EthInput(parseFloat(value));
       setYouGet_EthInput('');
+      setCalculatedFee(0.00)
     } else {
-      const newValue = Number(value); // Convert input value to a number
+      const newValue = Number(parseFloat(value)); // Convert input value to a number
       const fee = calculateFee(newValue); // Calculate the fee based on the new value
       setCalculatedFee(fee); // Update the calculated fee state
-      setYouPay_EthInput(value); // Update the You Pay input state
+      setYouPay_EthInput(newValue); // Update the You Pay input state
       setYouGet_EthInput(newValue - fee); // Set You Get input based on the calculated fee
     }
   };
@@ -148,13 +149,13 @@ export default function SendTransaction({ walletAddress, balance }) {
   const handleYouGet_EthInputChange = (value) => {
 
     if (value === '') {
-      setYouGet_EthInput(value);
+      setYouGet_EthInput(parseFloat(value));
       setYouPay_EthInput(''); // Clear first input if second input is empty
     } else {
-      const newValue = Number(value);
+      const newValue = parseFloat(value);
       const fee = calculateFee(newValue); // Calculate the fee based on the new value
       setCalculatedFee(fee); // Update the calculated fee state
-      setYouGet_EthInput(value);
+      setYouGet_EthInput(newValue);
       setYouPay_EthInput(newValue + fee); // Update first input value
     }
   };
@@ -262,7 +263,7 @@ export default function SendTransaction({ walletAddress, balance }) {
                   className={`absolute right-0 mt-1 w-48 p-2  text-red-600 border border-white rounded shadow-lg z-10 
                         transition-all duration-300 transform ${isBalanceInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
                 >
-                  <p className="text-xs">You should have at least {calculatedFee + youPay_EthInput} ETH in your balance to perform this trade.</p>
+                  <p className="text-xs">You should have at least {(calculatedFee + youPay_EthInput).toFixed(3)} ETH in your balance to perform this trade.</p>
                 </div>
               )}
             </div>
