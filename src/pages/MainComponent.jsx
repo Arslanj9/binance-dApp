@@ -19,14 +19,14 @@ const MainContent = () => {
 
 
   return (
-    <div>
+    <div className='lg:pb-16 md:pb-24 sm:pb-44'>
       <div className="my-4">
         <ConnectWallet setWalletAddress={setWalletAddress} walletAddress={walletAddress} setBalance={setBalance} />
       </div>
 
 
       {/* Button section */}
-      <div className="flex justify-center lg:mr-52 sm:mr-44 mt-8">
+      <div className="flex justify-center lg:mr-52 sm:mr-44 mt-12">
         <button
           className={`px-6 py-0 rounded-tl-2xl rounded-tr-2xl focus:outline-none ${activeSection === "sendTransaction" ? 'bg-blue-500 text-white' : 'bg-[rgb(0, 0, 24)]'}`}
           style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }}
