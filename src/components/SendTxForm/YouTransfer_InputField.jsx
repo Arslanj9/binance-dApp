@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 
-const YouPayInputField = ({ name, type, step, youPayUSDValue, value, onChange }) => {
-    
-
+const YouTransfer_InputField = ({ name, type, step, youPayUSDValue, value, onChange }) => {
 
     const handleChange = (event) => {
         const inputVal = event.target.value;
         onChange(inputVal);         // Send input to parent component
     };
+
 
     return (
         <div className="relative w-full ml-2">
@@ -31,4 +30,4 @@ const YouPayInputField = ({ name, type, step, youPayUSDValue, value, onChange })
     );
 }
 
-export default YouPayInputField;
+export default YouTransfer_InputField

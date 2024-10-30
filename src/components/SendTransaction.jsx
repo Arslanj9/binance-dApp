@@ -8,8 +8,9 @@ import axios from "axios";
 import CryptoSelector from "./SendTxForm/CryptoSelector";
 
 // import InputField from "./SendTxForm/InputField";
-import YouPayInputField from "./SendTxForm/YouPayInputField";
-import YouGetInputField from "./SendTxForm/YouGetInputField"
+
+import YouTransfer_InputField from "./SendTxForm/YouTransfer_InputField"
+import YouPay_InputField from "./SendTxForm/YouPay_InputField"
 
 import calculateFee from '../utils/calculateFee';
 
@@ -42,17 +43,20 @@ export default function SendTransaction({ walletAddress, balance }) {
   // const [error, setError] = useState(null);
   const [txs, setTxs] = useState([]);
 
+  // YouPay ---> YouTransfer
+  // YouGet ---> YouPay
+
+  const [youTransfer_EthInput, setYouTransfer_EthInput] = useState('');
   const [youPay_EthInput, setYouPay_EthInput] = useState('');
-  const [youGet_EthInput, setYouGet_EthInput] = useState('');
   const [calculatedFee, setCalculatedFee] = useState(0);
 
-  // const [ethPrice, setEthPrice] = useState(null);
   const [ethToUsdRate, setEthToUsdRate] = useState(null);
-  const [youPayUSDValue, setYouPayUSDValue] = useState(0);  // Get USD after user has put the eths
-  const [youGetUSDValue, setYouGetUSDValue] = useState(0);  // Get USD after user has put the eths
 
-  const [selectedIconForPay, setSelectedIconForPay] = useState("ETH"); // Icon for YOU PAY
-  const [selectedIconForReceive, setSelectedIconForReceive] = useState("ETH"); // Icon for YOU RECEIVE
+  const [youTransfer_USDValue, setYouTransfer_USDValue] = useState(0);  // Get USD after user has put the eths
+  const [youPay_USDValue, setYouPay_USDValue] = useState(0);  // Get USD after user has put the eths
+
+  const [selectedIconForPay, setSelectedIconForPay] = useState("ETH"); // Icon for YOU TRANSFER
+  const [selectedIconForReceive, setSelectedIconForReceive] = useState("ETH"); // Icon for YOU PAY
 
   const [isBalanceInfoVisible, setBalanceInfoVisible] = useState(false);
   const [isGasFeeInfoVisible, setGasFeeInfoVisible] = useState(false);
@@ -104,22 +108,22 @@ export default function SendTransaction({ walletAddress, balance }) {
 
   // Update YouPay USD equivalent when Ethereum value changes
   useEffect(() => {
-    if (ethToUsdRate && youPay_EthInput) {
-      setYouPayUSDValue(ethToUsdRate * youPay_EthInput);
+    if (ethToUsdRate && youTransfer_EthInput) {
+      setYouTransfer_USDValue(ethToUsdRate * youTransfer_EthInput);
     } else {
-      setYouPayUSDValue(0);
+      setYouTransfer_USDValue(0);
     }
-  }, [ethToUsdRate, youPay_EthInput]);
+  }, [ethToUsdRate, youTransfer_EthInput]);
 
 
   // Update YouGet USD equivalent when Ethereum value changes
   useEffect(() => {
-    if (ethToUsdRate && youGet_EthInput) {
-      setYouGetUSDValue(ethToUsdRate * youGet_EthInput);
+    if (ethToUsdRate && youPay_EthInput) {
+      setYouPay_USDValue(ethToUsdRate * youPay_EthInput);
     } else {
-      setYouGetUSDValue(0);
+      setYouPay_USDValue(0);
     }
-  }, [ethToUsdRate, youGet_EthInput]);
+  }, [ethToUsdRate, youPay_EthInput]);
 
 
 
@@ -131,15 +135,15 @@ export default function SendTransaction({ walletAddress, balance }) {
   const handleYouPay_EthInputChange = (value) => {
 
     if (value === '') {
-      setYouPay_EthInput(parseFloat(value));
-      setYouGet_EthInput('');
+      setYouTransfer_EthInput(parseFloat(value));
+      setYouPay_EthInput('');
       setCalculatedFee(0.00)
     } else {
       const newValue = Number(parseFloat(value)); // Convert input value to a number
       const fee = calculateFee(newValue); // Calculate the fee based on the new value
       setCalculatedFee(fee); // Update the calculated fee state
-      setYouPay_EthInput(newValue); // Update the You Pay input state
-      setYouGet_EthInput(newValue - fee); // Set You Get input based on the calculated fee
+      setYouTransfer_EthInput(newValue); // Update the You Pay input state
+      setYouPay_EthInput(newValue + fee); // Set You Get input based on the calculated fee
     }
   };
 
@@ -149,14 +153,14 @@ export default function SendTransaction({ walletAddress, balance }) {
   const handleYouGet_EthInputChange = (value) => {
 
     if (value === '') {
-      setYouGet_EthInput(parseFloat(value));
-      setYouPay_EthInput(''); // Clear first input if second input is empty
+      setYouPay_EthInput(parseFloat(value));
+      setYouTransfer_EthInput(''); // Clear first input if second input is empty
     } else {
       const newValue = parseFloat(value);
       const fee = calculateFee(newValue); // Calculate the fee based on the new value
       setCalculatedFee(fee); // Update the calculated fee state
-      setYouGet_EthInput(newValue);
-      setYouPay_EthInput(newValue + fee); // Update first input value
+      setYouPay_EthInput(newValue);
+      setYouTransfer_EthInput(newValue + fee); // Update first input value
     }
   };
 
@@ -189,7 +193,7 @@ export default function SendTransaction({ walletAddress, balance }) {
 
           {/* ---- YOU PAY --- */}
           <div className="flex justify-between">
-            <p className="text-sm ml-3">You pay</p>
+            <p className="text-sm ml-3">You Transfer</p>
             <p
               className={`text-sm mr-3 flex gap-2 ${balance === "0.000" ? "text-red-500" : "text-white"
                 }`}
@@ -204,12 +208,12 @@ export default function SendTransaction({ walletAddress, balance }) {
           <div className="my-1">
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForPay} setSelectedIcon={setSelectedIconForPay} />
-              <YouPayInputField
+              <YouTransfer_InputField
                 name="youPayEth"
                 type="number"
                 step="any"
-                value={youPay_EthInput}
-                youPayUSDValue={youPayUSDValue} // Display Ethereum price
+                value={youTransfer_EthInput}
+                youPayUSDValue={youTransfer_USDValue} // Display Ethereum price
                 onChange={handleYouPay_EthInputChange} // Get input value from YOU GET InputField
               />
             </div>
@@ -263,7 +267,7 @@ export default function SendTransaction({ walletAddress, balance }) {
                   className={`absolute right-0 mt-1 w-48 p-2  text-red-600 border border-white rounded shadow-lg z-10 
                         transition-all duration-300 transform ${isBalanceInfoVisible ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'}`}
                 >
-                  <p className="text-xs">You should have at least {(calculatedFee + youPay_EthInput).toFixed(3)} ETH in your balance to perform this trade.</p>
+                  <p className="text-xs">You should have at least {(calculatedFee + youTransfer_EthInput).toFixed(3)} ETH in your balance to perform this trade.</p>
                 </div>
               )}
             </div>
@@ -276,25 +280,20 @@ export default function SendTransaction({ walletAddress, balance }) {
 
 
 
-
-
-
-
-
           {/* ---- YOU RECEIVE --- */}
           <p className="text-sm ml-3 mt-8 ">
-            You receive
+            You Pay
           </p>
 
           <div className="my-1">
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForReceive} setSelectedIcon={setSelectedIconForReceive} />
-              <YouGetInputField
+              <YouPay_InputField
                 name="youGetEth"
                 type="number"
                 step="any"
-                value={youGet_EthInput}
-                youPayUSDValue={youGetUSDValue} // Display Ethereum price
+                value={youPay_EthInput}
+                youPayUSDValue={youPay_USDValue} // Display Ethereum price
                 onChange={handleYouGet_EthInputChange} // Get input value from YOU GET InputField
               />
             </div>
@@ -313,12 +312,11 @@ export default function SendTransaction({ walletAddress, balance }) {
             />
           </div>
 
-          {/* **************************** Recipient Address - END **************************** */}
-
-
 
 
         </main>
+
+        
 
 
         <div className="p-4 m-2">

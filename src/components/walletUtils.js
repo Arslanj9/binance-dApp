@@ -6,10 +6,13 @@ export const connectToWallet = async () => {
   }
 
   // Request account access from MetaMask
-  await window.ethereum.request({ method: 'eth_requestAccounts' });
+  await window.ethereum.request({ method: "eth_requestAccounts" });
 
   // Create a provider
   const provider = new ethers.BrowserProvider(window.ethereum);
+
+
+
 
   // Get the signer
   const signer = await provider.getSigner();
@@ -20,7 +23,6 @@ export const connectToWallet = async () => {
   // Get the balance
   const balance = await provider.getBalance(address);
   const formattedBalance = parseFloat(ethers.formatEther(balance)).toFixed(2); // Convert balance to Ether format
-
 
   return { provider, signer, address, balance: formattedBalance };
 };

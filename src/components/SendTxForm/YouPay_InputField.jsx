@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const YouGetInputField = ({ name, type, step, youPayUSDValue, value, onChange }) => {
+const YouPay_InputField = ({ name, type, step, youPayUSDValue, value, onChange }) => {
 
     const handleChange = (event) => {
         const inputVal = event.target.value;
@@ -30,4 +30,4 @@ const YouGetInputField = ({ name, type, step, youPayUSDValue, value, onChange })
     )
 }
 
-export default YouGetInputField
+export default YouPay_InputField
