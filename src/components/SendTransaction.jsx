@@ -17,7 +17,7 @@ import calculateFee from '../utils/calculateFee';
 
 
 
-const startPayment = async ({ setError, setTxs, ether, addr }) => {
+const startPayment = async ({ setTxs, ether, addr }) => {
   try {
     const { signer } = await connectToWallet(); // Use utility to connect
 
@@ -32,7 +32,7 @@ const startPayment = async ({ setError, setTxs, ether, addr }) => {
 
     setTxs([tx]);
   } catch (err) {
-    setError(err.message);
+    console.log(`Error Message is: ${err.message}`)
   }
 };
 
@@ -76,7 +76,7 @@ export default function SendTransaction({ walletAddress, balance }) {
     await startPayment({
       // setError,
       setTxs,
-      ether: data.get("ether"),
+      ether: data.get("youPayEth"),
       addr: data.get("addr"),
     });
   };
@@ -130,37 +130,37 @@ export default function SendTransaction({ walletAddress, balance }) {
 
 
   // Handle You Pay Ethereum input change
-  const handleYouPay_EthInputChange = (value) => {
-
-    if (value === '') {
-      setYouTransfer_EthInput(parseFloat(value));
-      setYouPay_EthInput('');
-      setCalculatedFee(0.00)
-    } else {
-      const newValue = Number(parseFloat(value)); // Convert input value to a number
-      const fee = calculateFee(newValue); // Calculate the fee based on the new value
-      setCalculatedFee(fee); // Update the calculated fee state
-      setYouTransfer_EthInput(newValue); // Update the You Pay input state
-      setYouPay_EthInput(newValue + fee); // Set You Get input based on the calculated fee
+const handleYouPay_EthInputChange = (value) => {
+  if (value === '') {
+    setYouTransfer_EthInput(''); // Clear the state as a string instead of NaN
+    setYouPay_EthInput('');      // Clear this input too
+    setCalculatedFee(0.00);      // Reset calculated fee
+  } else {
+    const newValue = parseFloat(value); // Convert input value to a number
+    if (!isNaN(newValue)) {             // Only proceed if newValue is a valid number
+      const fee = calculateFee(newValue);  // Calculate the fee based on the new value
+      setCalculatedFee(fee);               // Update the calculated fee state
+      setYouTransfer_EthInput(newValue);   // Update the You Pay input state
+      setYouPay_EthInput(newValue + fee);  // Set You Get input based on the calculated fee
     }
-  };
+  }
+};
 
-
-
-  // Handle You Get Ethereum input change
-  const handleYouGet_EthInputChange = (value) => {
-
-    if (value === '') {
-      setYouPay_EthInput(parseFloat(value));
-      setYouTransfer_EthInput(''); // Clear first input if second input is empty
-    } else {
-      const newValue = parseFloat(value);
-      const fee = calculateFee(newValue); // Calculate the fee based on the new value
-      setCalculatedFee(fee); // Update the calculated fee state
-      setYouPay_EthInput(newValue);
-      setYouTransfer_EthInput(newValue + fee); // Update first input value
+// Handle You Get Ethereum input change
+const handleYouGet_EthInputChange = (value) => {
+  if (value === '') {
+    setYouPay_EthInput('');         // Clear input if empty
+    setYouTransfer_EthInput('');    // Clear first input if second input is empty
+  } else {
+    const newValue = parseFloat(value);
+    if (!isNaN(newValue)) {         // Only proceed if newValue is a valid number
+      const fee = calculateFee(newValue);  // Calculate the fee based on the new value
+      setCalculatedFee(fee);               // Update the calculated fee state
+      setYouPay_EthInput(newValue);        // Update the second input state
+      setYouTransfer_EthInput(newValue + fee); // Update first input with calculated fee
     }
-  };
+  }
+};
 
 
 
@@ -207,7 +207,7 @@ export default function SendTransaction({ walletAddress, balance }) {
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForPay} setSelectedIcon={setSelectedIconForPay} />
               <YouTransfer_InputField
-                name="youPayEth"
+                name="youTransferEth"
                 type="number"
                 step="any"
                 value={youTransfer_EthInput}
@@ -287,7 +287,7 @@ export default function SendTransaction({ walletAddress, balance }) {
             <div className="relative flex items-center">
               <CryptoSelector selectedIcon={selectedIconForReceive} setSelectedIcon={setSelectedIconForReceive} />
               <YouPay_InputField
-                name="youGetEth"
+                name="youPayEth"
                 type="number"
                 step="any"
                 value={youPay_EthInput}
