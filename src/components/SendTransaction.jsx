@@ -43,8 +43,6 @@ export default function SendTransaction({ walletAddress, balance }) {
   // const [error, setError] = useState(null);
   const [txs, setTxs] = useState([]);
 
-  // YouPay ---> YouTransfer
-  // YouGet ---> YouPay
 
   const [youTransfer_EthInput, setYouTransfer_EthInput] = useState('');
   const [youPay_EthInput, setYouPay_EthInput] = useState('');

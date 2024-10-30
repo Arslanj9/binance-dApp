@@ -19,7 +19,7 @@ const MainContent = () => {
 
 
   return (
-    <div className='lg:pb-16 md:pb-24 sm:pb-44'>
+    <div className='md:pb-2 pb-0'>
       <div className="my-4">
         <ConnectWallet setWalletAddress={setWalletAddress} walletAddress={walletAddress} setBalance={setBalance} />
       </div>
@@ -28,14 +28,14 @@ const MainContent = () => {
       {/* Button section */}
       <div className="flex justify-center lg:mr-52 sm:mr-44 mt-12">
         <button
-          className={`px-6 py-0 rounded-tl-2xl rounded-tr-2xl focus:outline-none ${activeSection === "sendTransaction" ? 'bg-blue-500 text-white' : 'bg-[rgb(0, 0, 24)]'}`}
+          className={`px-8 py-0 rounded-tl-2xl rounded-tr-2xl focus:outline-none ${activeSection === "sendTransaction" ? 'bg-slate-400 bg-opacity-40 text-white' : 'bg-[rgb(0, 0, 24)]'}`}
           style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }}
           onClick={() => handleButtonClick("sendTransaction")}
         >
           Market
         </button>
         <button
-          className={`ml-1 px-6 py-0 rounded-tl-2xl rounded-tr-2xl ${activeSection === "fee" ? 'bg-blue-500 text-white' : 'bg-[rgb(0, 0, 24)]'}`}
+          className={`ml-1 px-8 py-0 rounded-tl-2xl rounded-tr-2xl ${activeSection === "fee" ? 'bg-slate-400 bg-opacity-40 text-white' : 'bg-[rgb(0, 0, 24)]'}`}
           style={{ border: "1px solid rgba(255, 254, 254, 0.219)" }}
           onClick={() => handleButtonClick("fee")}
         >
